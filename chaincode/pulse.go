@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/hyperledger/fabric-chaincode-go/pkg/statebased"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
@@ -159,6 +160,9 @@ func (c *PulseContract) ReportDeclined(ctx txCtx, id string) error {
 	}
 	p.State = StateDeclined
 	p.HeldBy = ""
+	if err := lockToOrg(ctx, p.ID, p.RemitterOrg); err != nil {
+		return err
+	}
 	return save(ctx, p)
 }
 
@@ -179,6 +183,9 @@ func (c *PulseContract) ReportCredited(ctx txCtx, id string) error {
 		return fmt.Errorf("cannot credit from state %s", p.State)
 	}
 	p.HeldBy = ""
+	if err := lockToOrg(ctx, p.ID, p.BeneficiaryOrg); err != nil {
+		return err
+	}
 	return save(ctx, p)
 }
 
@@ -223,4 +230,21 @@ func (c *PulseContract) CheckDeadline(ctx txCtx, id string) error {
 
 func (c *PulseContract) GetPayment(ctx txCtx, id string) (*Payment, error) {
 	return load(ctx, id)
+}
+
+// lockToOrg sets a state-based endorsement policy on the payment key so any
+// later write needs an endorsement from a peer of the owning bank.
+func lockToOrg(ctx txCtx, id, org string) error {
+	ep, err := statebased.NewStateEP(nil)
+	if err != nil {
+		return err
+	}
+	if err := ep.AddOrgs(statebased.RoleTypePeer, org); err != nil {
+		return err
+	}
+	policy, err := ep.Policy()
+	if err != nil {
+		return err
+	}
+	return ctx.GetStub().SetStateValidationParameter(id, policy)
 }

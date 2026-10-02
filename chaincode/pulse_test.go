@@ -41,6 +41,7 @@ type env struct {
 }
 
 func newEnv() *env {
+	policies = map[string][]byte{}
 	return &env{
 		stub: &fakeStub{state: map[string][]byte{}, now: time.Date(2026, 10, 4, 10, 0, 0, 0, time.UTC)},
 		cc:   &PulseContract{},
