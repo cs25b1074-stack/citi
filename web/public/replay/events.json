@@ -1,0 +1,118 @@
+{
+  "happy_path": [
+    {
+      "seq": 1,
+      "event": {
+        "id": "happy_path",
+        "state": "INITIATED",
+        "heldBy": "Org1MSP",
+        "deadlineAt": "",
+        "txId": "tx-hp-8f92a1",
+        "at": "2026-10-02T10:00:00.000Z"
+      }
+    },
+    {
+      "seq": 2,
+      "event": {
+        "id": "happy_path",
+        "state": "DEBITED",
+        "heldBy": "Org2MSP",
+        "deadlineAt": "2026-10-02T10:00:30.000Z",
+        "txId": "tx-hp-4c19d2",
+        "at": "2026-10-02T10:00:02.000Z"
+      }
+    },
+    {
+      "seq": 3,
+      "event": {
+        "id": "happy_path",
+        "state": "CREDITED",
+        "heldBy": "",
+        "deadlineAt": "2026-10-02T10:00:30.000Z",
+        "txId": "tx-hp-7b83e4",
+        "at": "2026-10-02T10:00:05.000Z"
+      }
+    }
+  ],
+  "bank_b_silent": [
+    {
+      "seq": 1,
+      "event": {
+        "id": "bank_b_silent",
+        "state": "INITIATED",
+        "heldBy": "Org1MSP",
+        "deadlineAt": "",
+        "txId": "tx-bs-1029aa",
+        "at": "2026-10-02T10:00:00.000Z"
+      }
+    },
+    {
+      "seq": 2,
+      "event": {
+        "id": "bank_b_silent",
+        "state": "DEBITED",
+        "heldBy": "Org2MSP",
+        "deadlineAt": "2026-10-02T10:00:30.000Z",
+        "txId": "tx-bs-5521bb",
+        "at": "2026-10-02T10:00:02.000Z"
+      }
+    },
+    {
+      "seq": 3,
+      "event": {
+        "id": "bank_b_silent",
+        "state": "STUCK",
+        "heldBy": "Org2MSP",
+        "deadlineAt": "2026-10-02T10:00:30.000Z",
+        "txId": "tx-bs-9912cc",
+        "at": "2026-10-02T10:00:35.000Z"
+      }
+    }
+  ],
+  "disputed_case": [
+    {
+      "seq": 1,
+      "event": {
+        "id": "disputed_case",
+        "state": "INITIATED",
+        "heldBy": "Org1MSP",
+        "deadlineAt": "",
+        "txId": "tx-dp-001",
+        "at": "2026-10-02T10:00:00.000Z"
+      }
+    },
+    {
+      "seq": 2,
+      "event": {
+        "id": "disputed_case",
+        "state": "DEBITED",
+        "heldBy": "Org2MSP",
+        "deadlineAt": "2026-10-02T10:00:30.000Z",
+        "txId": "tx-dp-002",
+        "at": "2026-10-02T10:00:02.000Z"
+      }
+    },
+    {
+      "seq": 3,
+      "event": {
+        "id": "disputed_case",
+        "state": "REVERSED",
+        "heldBy": "Org1MSP",
+        "deadlineAt": "2026-10-02T10:00:30.000Z",
+        "txId": "tx-dp-003",
+        "at": "2026-10-02T10:00:32.000Z"
+      }
+    },
+    {
+      "seq": 4,
+      "event": {
+        "id": "disputed_case",
+        "state": "DISPUTED",
+        "heldBy": "DISPUTED",
+        "deadlineAt": "2026-10-02T10:00:30.000Z",
+        "txId": "tx-dp-004",
+        "at": "2026-10-02T10:00:36.000Z"
+      }
+    }
+  ]
+}

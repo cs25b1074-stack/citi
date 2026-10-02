@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-10-02T10:43:42.155Z",
+  "metrics": {
+    "requestsSavedPercent": 100,
+    "networkBandwidthReductionPercent": -704,
+    "latencyImprovement": "Immediate push vs. avg 500-1000ms polling delay"
+  },
+  "baseline": {
+    "strategy": "HTTP Polling (1s interval)",
+    "totalRequests": 1,
+    "finalState": "CREDITED",
+    "elapsedMs": 40,
+    "averageIntervalMs": 0,
+    "bytesTransferred": 70
+  },
+  "pulse": {
+    "strategy": "Pulse Push (WebSocket + Ledger Checkpoint)",
+    "totalConnections": 1,
+    "totalPollingRequests": 0,
+    "eventsReceived": 3,
+    "finalState": "CREDITED",
+    "replayedEvents": 3,
+    "elapsedMs": 207,
+    "bytesTransferred": 563
+  }
+}

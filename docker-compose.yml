@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+      - CHANNEL=pulsechannel
+      - CHAINCODE=pulse
+      - CRYPTO_PATH=/organizations
+    volumes:
+      - ./network/out/organizations:/organizations:ro
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_GATEWAY_WS=ws://localhost:4000/ws
+      - VITE_GATEWAY_HTTP=http://localhost:4000
+    depends_on:
+      - gateway
+    restart: unless-stopped
+
+networks:
+  default:
+    name: pulse_net

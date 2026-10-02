@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main, feat/*]
+  pull_request:
+    branches: [main]
+
+jobs:
+  chaincode:
+    name: Chaincode (Go)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - name: Build & Test Chaincode
+        working-directory: ./chaincode
+        run: |
+          go build ./...
+          go test -v ./...
+
+  gateway:
+    name: Gateway (Node/TS)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & Test Gateway
+        working-directory: ./gateway
+        run: |
+          npm ci || npm install
+          npm test
+
+  web:
+    name: Web Frontend (React/Vite)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & Build Web
+        working-directory: ./web
+        run: |
+          npm ci || npm install
+          npm run build
