@@ -2,9 +2,11 @@
  * src/mock/server.ts
  *
  * Phase 1 mock gateway. Runs on PORT (default 4000).
- * Emits two fake payment scenarios:
- *   happy_path:   INITIATED -> DEBITED -> CREDITED
- *   bank_b_silent: INITIATED -> DEBITED -> STUCK (after deadline)
+ * Emits three fake payment scenarios:
+ *   happy_path:        INITIATED -> DEBITED -> CREDITED
+ *   bank_b_silent:     INITIATED -> DEBITED -> STUCK (after deadline)
+ *   disputed_case:     INITIATED -> DEBITED -> REVERSED -> DISPUTED
+ *                      (late credit arrives after Bank A already reversed)
  *
  * REST:  GET /payments, GET /payments/:id, GET /metrics,
  *        GET /baseline/status/:id
@@ -192,7 +194,44 @@ export function seedFakeEvents(): void {
     },
   ];
 
-  for (const ev of [...hp, ...bs]) {
+  // --- disputed_case: INITIATED -> DEBITED -> REVERSED -> DISPUTED ---
+  // Scenario: Bank A reverses after SLA breach; Bank B credits late -> conflict
+  const dc: PaymentEvent[] = [
+    {
+      id: "disputed_case",
+      state: "INITIATED",
+      heldBy: "Org1MSP",
+      deadlineAt: "",
+      txId: "tx-dc-1",
+      at: now.toISOString(),
+    },
+    {
+      id: "disputed_case",
+      state: "DEBITED",
+      heldBy: "Org2MSP",
+      deadlineAt: dl,
+      txId: "tx-dc-2",
+      at: new Date(now.getTime() + 2_000).toISOString(),
+    },
+    {
+      id: "disputed_case",
+      state: "REVERSED",
+      heldBy: "Org1MSP",
+      deadlineAt: dl,
+      txId: "tx-dc-3",
+      at: new Date(now.getTime() + 35_000).toISOString(),
+    },
+    {
+      id: "disputed_case",
+      state: "DISPUTED",
+      heldBy: "DISPUTED",
+      deadlineAt: dl,
+      txId: "tx-dc-4",
+      at: new Date(now.getTime() + 37_000).toISOString(),
+    },
+  ];
+
+  for (const ev of [...hp, ...bs, ...dc]) {
     // Validate before storing
     const parsed = PaymentEventSchema.parse(ev);
     storeEvent(parsed);
@@ -203,7 +242,7 @@ export function seedFakeEvents(): void {
 
 export function buildApp(): express.Express {
   const app = express();
-  app.use(cors({ origin: "http://localhost:5173" }));
+  app.use(cors({ origin: /^http:\/\/localhost:\d+$/ }));
   app.use(express.json());
 
   // Metrics middleware
@@ -316,6 +355,6 @@ if (process.env["VITEST"] === undefined) {
   server.listen(PORT, () => {
     console.log(`[mock] Pulse mock gateway listening on http://localhost:${PORT}`);
     console.log(`[mock] WebSocket: ws://localhost:${PORT}/ws`);
-    console.log(`[mock] Payments seeded: happy_path, bank_b_silent`);
+    console.log(`[mock] Payments seeded: happy_path, bank_b_silent, disputed_case`);
   });
 }
