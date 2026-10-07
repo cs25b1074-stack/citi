@@ -26,7 +26,7 @@ interface RegulatorDashboardProps {
   selectedScenario: string;
 }
 
-export const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({
+export const RegulatorDashboard: React.FC<RegulatorDashboardProps> = React.memo(({
   metrics,
   latestEvent,
   selectedScenario,
@@ -235,4 +235,4 @@ export const RegulatorDashboard: React.FC<RegulatorDashboardProps> = ({
       </div>
     </div>
   );
-};
+});

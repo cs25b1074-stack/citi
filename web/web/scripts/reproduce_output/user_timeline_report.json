@@ -1,0 +1,129 @@
+{
+  "viewName": "user_timeline",
+  "wsMessages": [
+    {
+      "dir": "received",
+      "payload": "{\"type\":\"connected\"}"
+    },
+    {
+      "dir": "sent",
+      "payload": "{\"type\":\"subscribe\",\"paymentId\":\"happy_path\",\"lastSeq\":0}"
+    },
+    {
+      "dir": "received",
+      "payload": "{\"type\":\"event\",\"seq\":1,\"event\":{\"id\":\"happy_path\",\"state\":\"INITIATED\",\"heldBy\":\"Org1MSP\",\"deadlineAt\":\"\",\"txId\":\"tx-hp-1\",\"at\":\"2026-10-02T10:00:00.000Z\"}}"
+    },
+    {
+      "dir": "received",
+      "payload": "{\"type\":\"event\",\"seq\":2,\"event\":{\"id\":\"happy_path\",\"state\":\"DEBITED\",\"heldBy\":\"Org2MSP\",\"deadlineAt\":\"2026-10-02T10:00:30.000Z\",\"txId\":\"tx-hp-2\",\"at\":\"2026-10-02T10:00:02.000Z\"}}"
+    },
+    {
+      "dir": "received",
+      "payload": "{\"type\":\"event\",\"seq\":3,\"event\":{\"id\":\"happy_path\",\"state\":\"CREDITED\",\"heldBy\":\"\",\"deadlineAt\":\"2026-10-02T10:00:30.000Z\",\"txId\":\"tx-hp-3\",\"at\":\"2026-10-02T10:00:05.000Z\"}}"
+    },
+    {
+      "dir": "sent",
+      "payload": "{\"type\":\"subscribe\",\"paymentId\":\"disputed_case\",\"lastSeq\":0}"
+    },
+    {
+      "dir": "received",
+      "payload": "{\"type\":\"event\",\"seq\":7,\"event\":{\"id\":\"disputed_case\",\"state\":\"INITIATED\",\"heldBy\":\"Org1MSP\",\"deadlineAt\":\"\",\"txId\":\"tx-dc-1\",\"at\":\"2026-10-02T10:00:00.000Z\"}}"
+    },
+    {
+      "dir": "received",
+      "payload": "{\"type\":\"event\",\"seq\":8,\"event\":{\"id\":\"disputed_case\",\"state\":\"DEBITED\",\"heldBy\":\"Org2MSP\",\"deadlineAt\":\"2026-10-02T10:00:30.000Z\",\"txId\":\"tx-dc-2\",\"at\":\"2026-10-02T10:00:02.000Z\"}}"
+    },
+    {
+      "dir": "received",
+      "payload": "{\"type\":\"event\",\"seq\":9,\"event\":{\"id\":\"disputed_case\",\"state\":\"REVERSED\",\"heldBy\":\"Org1MSP\",\"deadlineAt\":\"2026-10-02T10:00:30.000Z\",\"txId\":\"tx-dc-3\",\"at\":\"2026-10-02T10:00:35.000Z\"}}"
+    },
+    {
+      "dir": "received",
+      "payload": "{\"type\":\"event\",\"seq\":10,\"event\":{\"id\":\"disputed_case\",\"state\":\"DISPUTED\",\"heldBy\":\"DISPUTED\",\"deadlineAt\":\"2026-10-02T10:00:30.000Z\",\"txId\":\"tx-dc-4\",\"at\":\"2026-10-02T10:00:37.000Z\"}}"
+    }
+  ],
+  "consoleLogs": [
+    {
+      "type": "debug",
+      "text": "[vite] connecting..."
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold"
+    },
+    {
+      "type": "warning",
+      "text": "WebSocket connection to 'ws://localhost:4001/ws' failed: WebSocket is closed before the connection is established."
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    },
+    {
+      "type": "warning",
+      "text": "The width(0) and height(0) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    }
+  ],
+  "failedRequests": [],
+  "pageContentSummary": "DEMO CONTROLS (SCENARIO SIMULATOR)\nInteractive Mock Mode\nHappy Path\nInstant Credit (5s)\nBank B Silent\nSLA Stuck Escalate (30s)\nDisputed State\nLate Credit vs Reversal\nCURRENT CUSTODY & RESPONSIBILITY\nDISPUTED: Conflicting Org Signatures\n\nBeneficiary credited after remitter reversal. Escalated for arbitration.\n\nFabric SLA Active\nCheckpoint & Replay Layer — lastSeq = #10\n\nClients reconnect with #10 and catch up in a single frame.\n\nSimulate Drop & Catch-Up\nCryptographically Verified Ledger Timeline\n\nEach step is an immutable transaction signed by the owning bank identity (MSP).\n\nChannel: pulsechannel\nINITIATED\nInstruction created & validated\nBlock #7\n15:30:00\nSigner:\nOrg1MSP (Bank A)\nTx:\ntx-dc-1...\nCustody:\nOrg1MSP\nDEBITED\nSender account debited\nBlock #8\n15:30:02\nSigner:\nOrg1MSP (Bank A)\nTx:\ntx-dc-2...\nCustody:\nOrg2MSP\nREVERSED\nFunds returned to remitter\nBlock #9\n15:30:35\nSigner:\nOrg1MSP (Bank A)\nTx:\ntx-dc-3...\nCustody:\nOrg1MSP\nDISPUTED\nDispute flagged for arbitration\nBlock #10\n15:30:37\nSigner:\nOrg2MSP / Arbiter\nTx:\ntx-dc-4...\nCustody:\nDISPUTED"
+}

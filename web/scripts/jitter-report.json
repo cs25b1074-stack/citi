@@ -1,0 +1,596 @@
+{
+  "timeline": {
+    "totalCLS": 0.0003326758623123169,
+    "clsEntries": [
+      {
+        "value": 0.000013183593750000002,
+        "sources": [
+          {
+            "node": "SPAN.truncate",
+            "previousRect": {
+              "x": 1143.40625,
+              "y": 30,
+              "width": 79.171875,
+              "height": 16,
+              "top": 30,
+              "right": 1222.578125,
+              "bottom": 46,
+              "left": 1143.40625
+            },
+            "currentRect": {
+              "x": 1156.90625,
+              "y": 30,
+              "width": 46.1875,
+              "height": 16,
+              "top": 30,
+              "right": 1203.09375,
+              "bottom": 46,
+              "left": 1156.90625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.0002735163927078247,
+        "sources": [
+          {
+            "node": "NAV.flex.items-center",
+            "previousRect": {
+              "x": 477.3125,
+              "y": 14,
+              "width": 465.15625,
+              "height": 48,
+              "top": 14,
+              "right": 942.46875,
+              "bottom": 62,
+              "left": 477.3125
+            },
+            "currentRect": {
+              "x": 469.84375,
+              "y": 14,
+              "width": 480.09375,
+              "height": 48,
+              "top": 14,
+              "right": 949.9375,
+              "bottom": 62,
+              "left": 469.84375
+            }
+          },
+          {
+            "node": "#text",
+            "previousRect": {
+              "x": 85,
+              "y": 471,
+              "width": 275.78125,
+              "height": 13,
+              "top": 471,
+              "right": 360.78125,
+              "bottom": 484,
+              "left": 85
+            },
+            "currentRect": {
+              "x": 85,
+              "y": 470,
+              "width": 292.3125,
+              "height": 13,
+              "top": 470,
+              "right": 377.3125,
+              "bottom": 483,
+              "left": 85
+            }
+          },
+          {
+            "node": "SPAN.text-[10px].px-2",
+            "previousRect": {
+              "x": 148.765625,
+              "y": 19.25,
+              "width": 78.484375,
+              "height": 21,
+              "top": 19.25,
+              "right": 227.25,
+              "bottom": 40.25,
+              "left": 148.765625
+            },
+            "currentRect": {
+              "x": 142.171875,
+              "y": 19.25,
+              "width": 78.484375,
+              "height": 21,
+              "top": 19.25,
+              "right": 220.65625,
+              "bottom": 40.25,
+              "left": 142.171875
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.000011493968963623046,
+        "sources": [
+          {
+            "node": "#text",
+            "previousRect": {
+              "x": 85,
+              "y": 470,
+              "width": 292.3125,
+              "height": 13,
+              "top": 470,
+              "right": 377.3125,
+              "bottom": 483,
+              "left": 85
+            },
+            "currentRect": {
+              "x": 85,
+              "y": 470,
+              "width": 288.34375,
+              "height": 13,
+              "top": 470,
+              "right": 373.34375,
+              "bottom": 483,
+              "left": 85
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.000011493968963623046,
+        "sources": [
+          {
+            "node": "#text",
+            "previousRect": {
+              "x": 85,
+              "y": 470,
+              "width": 288.34375,
+              "height": 13,
+              "top": 470,
+              "right": 373.34375,
+              "bottom": 483,
+              "left": 85
+            },
+            "currentRect": {
+              "x": 85,
+              "y": 470,
+              "width": 292.3125,
+              "height": 13,
+              "top": 470,
+              "right": 377.3125,
+              "bottom": 483,
+              "left": 85
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.000011493968963623046,
+        "sources": [
+          {
+            "node": "#text",
+            "previousRect": {
+              "x": 85,
+              "y": 470,
+              "width": 292.3125,
+              "height": 13,
+              "top": 470,
+              "right": 377.3125,
+              "bottom": 483,
+              "left": 85
+            },
+            "currentRect": {
+              "x": 85,
+              "y": 470,
+              "width": 288.34375,
+              "height": 13,
+              "top": 470,
+              "right": 373.34375,
+              "bottom": 483,
+              "left": 85
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.000011493968963623046,
+        "sources": [
+          {
+            "node": "#text",
+            "previousRect": {
+              "x": 85,
+              "y": 470,
+              "width": 288.34375,
+              "height": 13,
+              "top": 470,
+              "right": 373.34375,
+              "bottom": 483,
+              "left": 85
+            },
+            "currentRect": {
+              "x": 85,
+              "y": 470,
+              "width": 292.3125,
+              "height": 13,
+              "top": 470,
+              "right": 377.3125,
+              "bottom": 483,
+              "left": 85
+            }
+          }
+        ]
+      }
+    ],
+    "longTasks": 2,
+    "idleDiffRate": 0,
+    "actDiffRate": 0.8888888888888888
+  },
+  "merchant": {
+    "totalCLS": 0.0015380332946777343,
+    "clsEntries": [
+      {
+        "value": 0.000013183593750000002,
+        "sources": [
+          {
+            "node": "SPAN.truncate",
+            "previousRect": {
+              "x": 1156.90625,
+              "y": 30,
+              "width": 46.1875,
+              "height": 16,
+              "top": 30,
+              "right": 1203.09375,
+              "bottom": 46,
+              "left": 1156.90625
+            },
+            "currentRect": {
+              "x": 1143.40625,
+              "y": 30,
+              "width": 79.171875,
+              "height": 16,
+              "top": 30,
+              "right": 1222.578125,
+              "bottom": 46,
+              "left": 1143.40625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.000013183593750000002,
+        "sources": [
+          {
+            "node": "SPAN.truncate",
+            "previousRect": {
+              "x": 1143.40625,
+              "y": 30,
+              "width": 79.171875,
+              "height": 16,
+              "top": 30,
+              "right": 1222.578125,
+              "bottom": 46,
+              "left": 1143.40625
+            },
+            "currentRect": {
+              "x": 1156.90625,
+              "y": 30,
+              "width": 46.1875,
+              "height": 16,
+              "top": 30,
+              "right": 1203.09375,
+              "bottom": 46,
+              "left": 1156.90625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00022370605468750003,
+        "sources": [
+          {
+            "node": "DIV.flex.items-start",
+            "previousRect": {
+              "x": 520.65625,
+              "y": 493,
+              "width": 539.34375,
+              "height": 52,
+              "top": 493,
+              "right": 1060,
+              "bottom": 545,
+              "left": 520.65625
+            },
+            "currentRect": {
+              "x": 520.65625,
+              "y": 485,
+              "width": 539.34375,
+              "height": 68,
+              "top": 485,
+              "right": 1060,
+              "bottom": 553,
+              "left": 520.65625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00003388595581054687,
+        "sources": [
+          {
+            "node": "#text",
+            "previousRect": {
+              "x": 584.65625,
+              "y": 529,
+              "width": 448,
+              "height": 15,
+              "top": 529,
+              "right": 1032.65625,
+              "bottom": 544,
+              "left": 584.65625
+            },
+            "currentRect": {
+              "x": 584.65625,
+              "y": 529,
+              "width": 448,
+              "height": 15,
+              "top": 529,
+              "right": 1032.65625,
+              "bottom": 544,
+              "left": 584.65625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00003388595581054687,
+        "sources": [
+          {
+            "node": "#text",
+            "previousRect": {
+              "x": 584.65625,
+              "y": 529,
+              "width": 448,
+              "height": 15,
+              "top": 529,
+              "right": 1032.65625,
+              "bottom": 544,
+              "left": 584.65625
+            },
+            "currentRect": {
+              "x": 584.65625,
+              "y": 529,
+              "width": 448,
+              "height": 15,
+              "top": 529,
+              "right": 1032.65625,
+              "bottom": 544,
+              "left": 584.65625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00003388595581054687,
+        "sources": [
+          {
+            "node": "#text",
+            "previousRect": {
+              "x": 584.65625,
+              "y": 529,
+              "width": 448,
+              "height": 15,
+              "top": 529,
+              "right": 1032.65625,
+              "bottom": 544,
+              "left": 584.65625
+            },
+            "currentRect": {
+              "x": 584.65625,
+              "y": 529,
+              "width": 448,
+              "height": 15,
+              "top": 529,
+              "right": 1032.65625,
+              "bottom": 544,
+              "left": 584.65625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00022370605468750003,
+        "sources": [
+          {
+            "node": "DIV.flex.items-start",
+            "previousRect": {
+              "x": 520.65625,
+              "y": 485,
+              "width": 539.34375,
+              "height": 68,
+              "top": 485,
+              "right": 1060,
+              "bottom": 553,
+              "left": 520.65625
+            },
+            "currentRect": {
+              "x": 520.65625,
+              "y": 493,
+              "width": 539.34375,
+              "height": 52,
+              "top": 493,
+              "right": 1060,
+              "bottom": 545,
+              "left": 520.65625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00022370605468750003,
+        "sources": [
+          {
+            "node": "DIV.flex.items-start",
+            "previousRect": {
+              "x": 520.65625,
+              "y": 493,
+              "width": 539.34375,
+              "height": 52,
+              "top": 493,
+              "right": 1060,
+              "bottom": 545,
+              "left": 520.65625
+            },
+            "currentRect": {
+              "x": 520.65625,
+              "y": 485,
+              "width": 539.34375,
+              "height": 68,
+              "top": 485,
+              "right": 1060,
+              "bottom": 553,
+              "left": 520.65625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00022370605468750003,
+        "sources": [
+          {
+            "node": "DIV.flex.items-start",
+            "previousRect": {
+              "x": 520.65625,
+              "y": 485,
+              "width": 539.34375,
+              "height": 68,
+              "top": 485,
+              "right": 1060,
+              "bottom": 553,
+              "left": 520.65625
+            },
+            "currentRect": {
+              "x": 520.65625,
+              "y": 493,
+              "width": 539.34375,
+              "height": 52,
+              "top": 493,
+              "right": 1060,
+              "bottom": 545,
+              "left": 520.65625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00003388595581054687,
+        "sources": [
+          {
+            "node": "#text",
+            "previousRect": {
+              "x": 584.65625,
+              "y": 529,
+              "width": 448,
+              "height": 15,
+              "top": 529,
+              "right": 1032.65625,
+              "bottom": 544,
+              "left": 584.65625
+            },
+            "currentRect": {
+              "x": 584.65625,
+              "y": 529,
+              "width": 448,
+              "height": 15,
+              "top": 529,
+              "right": 1032.65625,
+              "bottom": 544,
+              "left": 584.65625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00003388595581054687,
+        "sources": [
+          {
+            "node": "#text",
+            "previousRect": {
+              "x": 584.65625,
+              "y": 529,
+              "width": 448,
+              "height": 15,
+              "top": 529,
+              "right": 1032.65625,
+              "bottom": 544,
+              "left": 584.65625
+            },
+            "currentRect": {
+              "x": 584.65625,
+              "y": 529,
+              "width": 448,
+              "height": 15,
+              "top": 529,
+              "right": 1032.65625,
+              "bottom": 544,
+              "left": 584.65625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00022370605468750003,
+        "sources": [
+          {
+            "node": "DIV.flex.items-start",
+            "previousRect": {
+              "x": 520.65625,
+              "y": 493,
+              "width": 539.34375,
+              "height": 52,
+              "top": 493,
+              "right": 1060,
+              "bottom": 545,
+              "left": 520.65625
+            },
+            "currentRect": {
+              "x": 520.65625,
+              "y": 485,
+              "width": 539.34375,
+              "height": 68,
+              "top": 485,
+              "right": 1060,
+              "bottom": 553,
+              "left": 520.65625
+            }
+          }
+        ]
+      },
+      {
+        "value": 0.00022370605468750003,
+        "sources": [
+          {
+            "node": "DIV.flex.items-start",
+            "previousRect": {
+              "x": 520.65625,
+              "y": 485,
+              "width": 539.34375,
+              "height": 68,
+              "top": 485,
+              "right": 1060,
+              "bottom": 553,
+              "left": 520.65625
+            },
+            "currentRect": {
+              "x": 520.65625,
+              "y": 493,
+              "width": 539.34375,
+              "height": 52,
+              "top": 493,
+              "right": 1060,
+              "bottom": 545,
+              "left": 520.65625
+            }
+          }
+        ]
+      }
+    ],
+    "longTasks": 0,
+    "idleDiffRate": 0.3333333333333333,
+    "actDiffRate": 1
+  }
+}
