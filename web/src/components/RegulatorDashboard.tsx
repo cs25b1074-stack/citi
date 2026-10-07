@@ -19,6 +19,7 @@ import {
   Cell
 } from 'recharts';
 import { GatewayMetrics, PaymentEvent } from '../types/pulse';
+import { useCountUp } from '../hooks/useCountUp';
 
 interface RegulatorDashboardProps {
   metrics: GatewayMetrics;
@@ -36,6 +37,13 @@ export const RegulatorDashboard: React.FC<RegulatorDashboardProps> = React.memo(
     { name: 'Traditional Polling', requests: 12, bandwidth: 2840, latency: 850 },
     { name: 'Pulse (Push + Ledger)', requests: 1, bandwidth: 520, latency: 15 },
   ];
+
+  // Animated counters for the four stat cards
+  const animatedRequestsServed = useCountUp(metrics.requestsServed);
+  const animatedEventsPushed = useCountUp(metrics.eventsPushed);
+  const animatedReplays = useCountUp(metrics.replays);
+  const escalationsValue = metrics.escalations > 0 ? metrics.escalations : (selectedScenario === 'bank_b_silent' ? 1 : 0);
+  const animatedEscalations = useCountUp(escalationsValue);
 
   return (
     <div className="space-y-6">
@@ -71,7 +79,7 @@ export const RegulatorDashboard: React.FC<RegulatorDashboardProps> = React.memo(
             HTTP Requests Served
           </div>
           <div className="text-2xl font-bold text-slate-100 font-mono mt-1">
-            {metrics.requestsServed}
+            {animatedRequestsServed}
           </div>
           <div className="text-[11px] text-cyan-400 mt-1 flex items-center gap-1">
             <Server className="w-3 h-3" /> Gateway REST + Baseline
@@ -83,7 +91,7 @@ export const RegulatorDashboard: React.FC<RegulatorDashboardProps> = React.memo(
             Events Pushed
           </div>
           <div className="text-2xl font-bold text-emerald-400 font-mono mt-1">
-            {metrics.eventsPushed}
+            {animatedEventsPushed}
           </div>
           <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Over WebSocket
@@ -95,7 +103,7 @@ export const RegulatorDashboard: React.FC<RegulatorDashboardProps> = React.memo(
             Replayed Blocks
           </div>
           <div className="text-2xl font-bold text-cyan-300 font-mono mt-1">
-            {metrics.replays}
+            {animatedReplays}
           </div>
           <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
             <Clock className="w-3 h-3 text-cyan-400" /> Reconnected clients
@@ -106,8 +114,8 @@ export const RegulatorDashboard: React.FC<RegulatorDashboardProps> = React.memo(
           <div className="text-[11px] uppercase tracking-wider text-slate-400 font-mono">
             SLA Escalations
           </div>
-          <div className={`text-2xl font-bold font-mono mt-1 ${metrics.escalations > 0 ? 'text-rose-400' : 'text-slate-100'}`}>
-            {metrics.escalations > 0 ? metrics.escalations : (selectedScenario === 'bank_b_silent' ? 1 : 0)}
+          <div className={`text-2xl font-bold font-mono mt-1 ${escalationsValue > 0 ? 'text-rose-400' : 'text-slate-100'}`}>
+            {animatedEscalations}
           </div>
           <div className="text-[11px] text-rose-400 mt-1 flex items-center gap-1">
             <AlertTriangle className="w-3 h-3" /> STUCK transactions

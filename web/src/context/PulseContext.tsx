@@ -106,7 +106,7 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
   // Poll metrics with deep equality check to skip identical renders
   const refreshMetrics = useCallback(async () => {
     try {
-      const res = await fetch('http://localhost:4001/metrics');
+      const res = await fetch('http://localhost:4000/metrics');
       if (res.ok) {
         const data: GatewayMetrics = await res.json();
         setMetrics((prev) => {
@@ -291,7 +291,7 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
 
     connectionInProgressRef.current = true;
 
-    const wsUrl = 'ws://localhost:4001/ws';
+    const wsUrl = 'ws://localhost:4000/ws';
 
     try {
       const ws = new WebSocket(wsUrl);
@@ -351,7 +351,7 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
       ws.onerror = () => {
         connectionInProgressRef.current = false;
         updateConnectionStatus(false);
-        setError('Cannot connect to ws://localhost:4001/ws');
+        setError('Cannot connect to ws://localhost:4000/ws');
         loadReplayData(selectedScenarioRef.current);
       };
     } catch (err: any) {
