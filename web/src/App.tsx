@@ -125,7 +125,7 @@ const DemoControls = React.memo(function DemoControls({
   setSelectedScenario: (id: string) => void;
 }) {
   const { isReplayMode } = usePulseConnection();
-  const { appendMockEvent } = usePulseEvents();
+  const { appendMockEvent, clearHistory } = usePulseEvents();
 
   const scenarios = [
     {
@@ -211,6 +211,16 @@ const DemoControls = React.memo(function DemoControls({
           );
         })}
       </div>
+      <button
+        onClick={clearHistory}
+        className="mt-3 w-full sm:w-auto px-3 py-1.5 rounded-lg text-xs font-mono text-rose-400 hover:bg-rose-950/30 border border-rose-900/50 transition-colors"
+        title="Clear all saved history and counters"
+      >
+        <span className="flex items-center gap-1.5">
+          <span>🗑️</span>
+          Clear History
+        </span>
+      </button>
     </div>
   );
 });
