@@ -1,5 +1,74 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { PaymentEvent, StoredTimelineItem, GatewayMetrics } from '../types/pulse';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+
+const STORAGE_KEY = 'pulse-history-v1';
+
+interface PersistedState {
+  timeline: StoredTimelineItem[];
+  metrics: GatewayMetrics;
+  lastSeq: number;
+  selectedScenario: string;
+  stuckPaymentIds: string[];
+}
+
+const defaultMetrics: GatewayMetrics = {
+  requestsServed: 0,
+  eventsPushed: 0,
+  replays: 0,
+  escalations: 0,
+};
+
+const defaultPersistedState: PersistedState = {
+  timeline: [],
+  metrics: defaultMetrics,
+  lastSeq: 0,
+  selectedScenario: 'happy_path',
+  stuckPaymentIds: [],
+};
+
+function loadPersistedState(): PersistedState {
+  if (typeof window === 'undefined') return defaultPersistedState;
+  try {
+    const item = window.localStorage.getItem(STORAGE_KEY);
+    if (!item) return defaultPersistedState;
+    const parsed = JSON.parse(item);
+    return {
+      timeline: parsed.timeline ?? [],
+      metrics: parsed.metrics ?? defaultMetrics,
+      lastSeq: parsed.lastSeq ?? 0,
+      selectedScenario: parsed.selectedScenario ?? 'happy_path',
+      stuckPaymentIds: parsed.stuckPaymentIds ?? [],
+    };
+  } catch {
+    return defaultPersistedState;
+  }
+}
+
+function savePersistedState(state: PersistedState): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (error) {
+    console.warn('Failed to save pulse history:', error);
+  }
+}
+
+function mergeTimeline(existing: StoredTimelineItem[], incoming: StoredTimelineItem[]): StoredTimelineItem[] {
+  const existingKeyMap = new Map(
+    existing.map((item) => [`${item.event.txId || item.event.id}:${item.event.state}:${item.seq}`, item])
+  );
+  let hasChanges = false;
+  for (const item of incoming) {
+    const key = `${item.event.txId || item.event.id}:${item.event.state}:${item.seq}`;
+    if (!existingKeyMap.has(key)) {
+      existingKeyMap.set(key, item);
+      hasChanges = true;
+    }
+  }
+  if (!hasChanges) return existing;
+  return Array.from(existingKeyMap.values()).sort((a, b) => a.seq - b.seq);
+}
 
 // ── Sub-Context Interfaces ───────────────────────────────────────────────────
 
@@ -23,6 +92,7 @@ export interface PulseEventsContextValue {
   setSelectedScenario: (id: string) => void;
   simulateCatchup: () => void;
   appendMockEvent: (scenarioId: string, state: PaymentEvent['state']) => void;
+  clearHistory: () => void;
 }
 
 export interface PulseContextValue
@@ -56,7 +126,6 @@ export function usePulseEvents(): PulseEventsContextValue {
   return ctx;
 }
 
-/** Unified hook for backward compatibility */
 export function usePulse(): PulseContextValue {
   const conn = usePulseConnection();
   const met = usePulseMetrics();
@@ -72,24 +141,36 @@ interface PulseProviderProps {
 }
 
 export function PulseProvider({ children, initialScenario = 'happy_path' }: PulseProviderProps) {
-  const [timeline, setTimeline] = useState<StoredTimelineItem[]>([]);
+  const [persistedState, setPersistedState] = useState<PersistedState>(() => loadPersistedState());
+  
   const [isConnected, setIsConnected] = useState(false);
-  const [lastSeq, setLastSeq] = useState(0);
-  const [metrics, setMetrics] = useState<GatewayMetrics>({
-    requestsServed: 0,
-    eventsPushed: 0,
-    replays: 0,
-    escalations: 0,
-  });
   const [error, setError] = useState<string | null>(null);
-  const [selectedScenario, _setScenarioState] = useState(initialScenario);
   const [isReplayMode] = useState(() => import.meta.env.VITE_MODE === 'replay');
 
-  // Always holds the current scenario ID — safe to read inside WS callbacks/closures
-  const selectedScenarioRef = useRef(initialScenario);
+  const {
+    timeline,
+    metrics,
+    lastSeq,
+    selectedScenario: persistedScenario,
+    stuckPaymentIds,
+  } = persistedState;
+
+  const selectedScenarioRef = useRef(persistedScenario);
+  const timelineRef = useRef(timeline);
+  const metricsRef = useRef(metrics);
+  const stuckPaymentIdsRef = useRef(stuckPaymentIds);
+
+  timelineRef.current = timeline;
+  metricsRef.current = metrics;
+  stuckPaymentIdsRef.current = stuckPaymentIds;
+
   const setSelectedScenario = useCallback((id: string) => {
     selectedScenarioRef.current = id;
-    _setScenarioState(id);
+    setPersistedState((prev) => {
+      const next = { ...prev, selectedScenario: id };
+      savePersistedState(next);
+      return next;
+    });
   }, []);
 
   const wsRef = useRef<WebSocket | null>(null);
@@ -103,22 +184,21 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
   const isFirstMountRef = useRef(true);
   const connectionInProgressRef = useRef(false);
 
-  // Poll metrics with deep equality check to skip identical renders
   const refreshMetrics = useCallback(async () => {
     try {
       const res = await fetch('http://localhost:4000/metrics');
       if (res.ok) {
         const data: GatewayMetrics = await res.json();
-        setMetrics((prev) => {
-          if (
-            prev.requestsServed === data.requestsServed &&
-            prev.eventsPushed === data.eventsPushed &&
-            prev.replays === data.replays &&
-            prev.escalations === data.escalations
-          ) {
-            return prev;
-          }
-          return data;
+        setPersistedState((prev) => {
+          const nextMetrics = {
+            requestsServed: Math.max(prev.metrics.requestsServed, data.requestsServed),
+            eventsPushed: Math.max(prev.metrics.eventsPushed, data.eventsPushed),
+            replays: Math.max(prev.metrics.replays, data.replays),
+            escalations: Math.max(prev.metrics.escalations, data.escalations),
+          };
+          const next = { ...prev, metrics: nextMetrics };
+          savePersistedState(next);
+          return next;
         });
       }
     } catch {
@@ -132,10 +212,15 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
       if (!res.ok) throw new Error('Could not load replay JSON');
       const data = await res.json();
       const events: StoredTimelineItem[] = data[id] || data['happy_path'] || [];
-      setTimeline(events);
-      if (events.length > 0) {
-        setLastSeq(events[events.length - 1].seq);
-      }
+      setPersistedState((prev) => {
+        const mergedTimeline = mergeTimeline(prev.timeline, events);
+        const next = { ...prev, timeline: mergedTimeline };
+        if (events.length > 0) {
+          next.lastSeq = Math.max(prev.lastSeq, events[events.length - 1].seq);
+        }
+        savePersistedState(next);
+        return next;
+      });
       setIsConnected(true);
       setError(null);
     } catch (err: any) {
@@ -143,31 +228,21 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
     }
   }, []);
 
-  // Flush buffered WS events at most every ~200ms; dedupe by txId + state
   const flushPendingUpdates = useCallback(() => {
     if (pendingUpdatesRef.current.length > 0) {
       const newItems = [...pendingUpdatesRef.current];
       pendingUpdatesRef.current = [];
-      setTimeline((prev) => {
-        const existingKeyMap = new Map(
-          prev.map((item) => [`${item.event.txId || item.event.id}:${item.event.state}`, item])
-        );
-        let hasChanges = false;
-        for (const item of newItems) {
-          const key = `${item.event.txId || item.event.id}:${item.event.state}`;
-          if (!existingKeyMap.has(key)) {
-            existingKeyMap.set(key, item);
-            hasChanges = true;
-          }
-        }
-        if (!hasChanges) return prev;
-        return Array.from(existingKeyMap.values()).sort((a, b) => a.seq - b.seq);
+      setPersistedState((prev) => {
+        const mergedTimeline = mergeTimeline(prev.timeline, newItems);
+        if (mergedTimeline.length <= prev.timeline.length) return prev;
+        const next = { ...prev, timeline: mergedTimeline };
+        savePersistedState(next);
+        return next;
       });
     }
     batchTimerRef.current = null;
   }, []);
 
-  // Seed mock transactions on load (for mock/replay mode)
   const seedMockTransactions = useCallback(() => {
     if (!isReplayMode) return;
     const now = new Date().toISOString();
@@ -206,17 +281,24 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
         },
       },
     ];
-    setTimeline(mockEvents);
-    setLastSeq(3);
+    setPersistedState((prev) => {
+      const mergedTimeline = mergeTimeline(prev.timeline, mockEvents);
+      const next = {
+        ...prev,
+        timeline: mergedTimeline,
+        lastSeq: Math.max(prev.lastSeq, 3),
+      };
+      savePersistedState(next);
+      return next;
+    });
     setIsConnected(true);
     setError(null);
   }, [isReplayMode]);
 
-  // Append new event for scenario simulation
   const appendMockEvent = useCallback((scenarioId: string, state: PaymentEvent['state']) => {
     if (!isReplayMode) return;
-    setTimeline((prev) => {
-      const nextSeq = (prev[prev.length - 1]?.seq ?? 0) + 1;
+    setPersistedState((prev) => {
+      const nextSeq = (prev.timeline[prev.timeline.length - 1]?.seq ?? 0) + 1;
       const newItem: StoredTimelineItem = {
         seq: nextSeq,
         event: {
@@ -228,10 +310,23 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
           at: new Date().toISOString(),
         },
       };
-      setLastSeq(nextSeq);
-      return [...prev, newItem];
+      const mergedTimeline = mergeTimeline(prev.timeline, [newItem]);
+      const next = {
+        ...prev,
+        timeline: mergedTimeline,
+        lastSeq: Math.max(prev.lastSeq, nextSeq),
+      };
+      savePersistedState(next);
+      return next;
     });
   }, [isReplayMode]);
+
+  const clearHistory = useCallback(() => {
+    const cleared = defaultPersistedState;
+    savePersistedState(cleared);
+    setPersistedState(cleared);
+    setError(null);
+  }, []);
 
   const scheduleReconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
@@ -276,15 +371,12 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
 
     manualDisconnectRef.current = false;
 
-    // Prevent multiple simultaneous connection attempts
     if (connectionInProgressRef.current) {
       return;
     }
 
-    // Always read current scenario from ref — safe inside any closure/reconnect
     const scenarioId = selectedScenarioRef.current;
 
-    // If there's already an open connection for this scenario, don't create a new one
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       return;
     }
@@ -302,7 +394,6 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
         updateConnectionStatus(true);
         setError(null);
         clearReconnect();
-        // Read ref again in case scenario changed while connecting
         const subMsg = {
           type: 'subscribe',
           paymentId: selectedScenarioRef.current,
@@ -322,9 +413,40 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
             };
 
             pendingUpdatesRef.current.push(newItem);
-            setLastSeq((prev) => (prev === msg.seq ? prev : Math.max(prev, msg.seq)));
+            
+            setPersistedState((prev) => {
+              const nextLastSeq = Math.max(prev.lastSeq, msg.seq);
+              
+              let nextMetrics = { ...prev.metrics };
+              if (msg.event.state === 'STUCK') {
+                if (!prev.stuckPaymentIds.includes(msg.event.id)) {
+                  nextMetrics = {
+                    ...nextMetrics,
+                    escalations: nextMetrics.escalations + 1,
+                  };
+                  if (!stuckPaymentIdsRef.current.includes(msg.event.id)) {
+                    stuckPaymentIdsRef.current = [...stuckPaymentIdsRef.current, msg.event.id];
+                  }
+                }
+              }
+              
+              nextMetrics = {
+                requestsServed: Math.max(nextMetrics.requestsServed, prev.metrics.requestsServed),
+                eventsPushed: Math.max(nextMetrics.eventsPushed, prev.metrics.eventsPushed),
+                replays: Math.max(nextMetrics.replays, prev.metrics.replays),
+                escalations: Math.max(nextMetrics.escalations, prev.metrics.escalations),
+              };
 
-            // Buffer events with ~200ms batch flush
+              const next = {
+                ...prev,
+                lastSeq: nextLastSeq,
+                metrics: nextMetrics,
+                stuckPaymentIds: stuckPaymentIdsRef.current,
+              };
+              savePersistedState(next);
+              return next;
+            });
+            
             if (!batchTimerRef.current) {
               batchTimerRef.current = window.setTimeout(flushPendingUpdates, 200);
             }
@@ -366,8 +488,6 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
     }
   }, [
     isReplayMode,
-    // selectedScenario intentionally NOT in deps — we use selectedScenarioRef.current
-    // to avoid recreating this callback on every scenario change (which breaks reconnect closures)
     seedMockTransactions,
     loadReplayData,
     refreshMetrics,
@@ -395,34 +515,23 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
     updateConnectionStatus(false);
   }, [clearReconnect, updateConnectionStatus]);
 
-  // Single effect to manage WebSocket connection lifecycle:
-  // - On mount: establish connection
-  // - On scenario change: close old WS, open new one for new scenario
-  // - On unmount: cleanup
+  // Scenario change: only switch scenario, keep history/counters
   useEffect(() => {
-    // Skip connectWsInternal on first mount — the mount effect below handles it
     if (isFirstMountRef.current) {
       isFirstMountRef.current = false;
       return;
     }
 
-    // Scenario changed — reset state and reconnect
-    setTimeline([]);
-    setLastSeq(0);
-    setError(null);
     clearReconnect();
     pendingUpdatesRef.current = [];
 
     if (isReplayMode) {
-      loadReplayData(selectedScenario);
+      loadReplayData(selectedScenarioRef.current);
       return;
     }
 
-    // Close existing WS and open a fresh one for the new scenario.
-    // Sending a second 'subscribe' on an open socket would register a second
-    // server-side subscriber and cause duplicate/mismatched replay events.
     if (wsRef.current) {
-      manualDisconnectRef.current = true; // suppress reconnect from onclose
+      manualDisconnectRef.current = true;
       wsRef.current.close();
       wsRef.current = null;
       manualDisconnectRef.current = false;
@@ -433,18 +542,17 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
     }
 
     connectWsInternal();
-  }, [selectedScenario, isReplayMode, loadReplayData, clearReconnect, connectWsInternal]);
+  }, [persistedScenario, isReplayMode, loadReplayData, clearReconnect, connectWsInternal]);
 
-  // Mount/unmount effect: establish initial connection and metrics polling
+  // Mount effect
   useEffect(() => {
-    // StrictMode double-mount guard: if a connection already exists or is in progress, don't create another
     if (wsRef.current?.readyState === WebSocket.OPEN || connectionInProgressRef.current) {
       mountedRef.current = true;
       return;
     }
 
     mountedRef.current = true;
-    isFirstMountRef.current = false; // mark first mount as done
+    isFirstMountRef.current = false;
     connectWsInternal();
     const interval = setInterval(refreshMetrics, 3000);
     return () => {
@@ -473,7 +581,6 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
     }, 600);
   }, [disconnectManually, connectWsInternal]);
 
-  // Separate memoized sub-contexts to isolate re-render domains
   const connectionValue = useMemo(
     () => ({
       isConnected,
@@ -497,19 +604,21 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
       timeline,
       latestEvent,
       lastSeq,
-      selectedScenario,
+      selectedScenario: persistedScenario,
       setSelectedScenario,
       simulateCatchup,
       appendMockEvent,
+      clearHistory,
     }),
     [
       timeline,
       latestEvent,
       lastSeq,
-      selectedScenario,
+      persistedScenario,
       setSelectedScenario,
       simulateCatchup,
       appendMockEvent,
+      clearHistory,
     ]
   );
 
