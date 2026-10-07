@@ -42,7 +42,7 @@ async function runTest(viewName, tabSelector) {
     });
   });
 
-  await page.goto('http://localhost:5173');
+  await page.goto('http://localhost:5174');
   await page.waitForTimeout(1000);
 
   // Switch to tab if specified

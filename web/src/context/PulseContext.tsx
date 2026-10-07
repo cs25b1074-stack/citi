@@ -100,11 +100,13 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
   const reconnectAttemptRef = useRef(0);
   const disconnectedAtRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
+  const isFirstMountRef = useRef(true);
+  const connectionInProgressRef = useRef(false);
 
   // Poll metrics with deep equality check to skip identical renders
   const refreshMetrics = useCallback(async () => {
     try {
-      const res = await fetch('http://localhost:4000/metrics');
+      const res = await fetch('http://localhost:4001/metrics');
       if (res.ok) {
         const data: GatewayMetrics = await res.json();
         setMetrics((prev) => {
@@ -274,21 +276,29 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
 
     manualDisconnectRef.current = false;
 
-    // Always read current scenario from ref — safe inside any closure/reconnect
-    const scenarioId = selectedScenarioRef.current;
-
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      // Already open for the same scenario — nothing to do
+    // Prevent multiple simultaneous connection attempts
+    if (connectionInProgressRef.current) {
       return;
     }
 
-    const wsUrl = 'ws://localhost:4000/ws';
+    // Always read current scenario from ref — safe inside any closure/reconnect
+    const scenarioId = selectedScenarioRef.current;
+
+    // If there's already an open connection for this scenario, don't create a new one
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      return;
+    }
+
+    connectionInProgressRef.current = true;
+
+    const wsUrl = 'ws://localhost:4001/ws';
 
     try {
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
       ws.onopen = () => {
+        connectionInProgressRef.current = false;
         updateConnectionStatus(true);
         setError(null);
         clearReconnect();
@@ -327,6 +337,7 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
       };
 
       ws.onclose = () => {
+        connectionInProgressRef.current = false;
         updateConnectionStatus(false);
         if (batchTimerRef.current) {
           clearTimeout(batchTimerRef.current);
@@ -338,11 +349,13 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
       };
 
       ws.onerror = () => {
+        connectionInProgressRef.current = false;
         updateConnectionStatus(false);
-        setError('Cannot connect to ws://localhost:4000/ws');
+        setError('Cannot connect to ws://localhost:4001/ws');
         loadReplayData(selectedScenarioRef.current);
       };
     } catch (err: any) {
+      connectionInProgressRef.current = false;
       console.error('[WS] Connection error:', err);
       setError(err.message);
       updateConnectionStatus(false);
@@ -382,8 +395,18 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
     updateConnectionStatus(false);
   }, [clearReconnect, updateConnectionStatus]);
 
-  // Reset timeline and reopen WS when scenario changes
+  // Single effect to manage WebSocket connection lifecycle:
+  // - On mount: establish connection
+  // - On scenario change: close old WS, open new one for new scenario
+  // - On unmount: cleanup
   useEffect(() => {
+    // Skip connectWsInternal on first mount — the mount effect below handles it
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      return;
+    }
+
+    // Scenario changed — reset state and reconnect
     setTimeline([]);
     setLastSeq(0);
     setError(null);
@@ -412,9 +435,16 @@ export function PulseProvider({ children, initialScenario = 'happy_path' }: Puls
     connectWsInternal();
   }, [selectedScenario, isReplayMode, loadReplayData, clearReconnect, connectWsInternal]);
 
-  // Single connection effect - only runs on mount/unmount
+  // Mount/unmount effect: establish initial connection and metrics polling
   useEffect(() => {
+    // StrictMode double-mount guard: if a connection already exists or is in progress, don't create another
+    if (wsRef.current?.readyState === WebSocket.OPEN || connectionInProgressRef.current) {
+      mountedRef.current = true;
+      return;
+    }
+
     mountedRef.current = true;
+    isFirstMountRef.current = false; // mark first mount as done
     connectWsInternal();
     const interval = setInterval(refreshMetrics, 3000);
     return () => {
